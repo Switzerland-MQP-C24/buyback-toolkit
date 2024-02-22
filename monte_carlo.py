@@ -32,3 +32,25 @@ def simulate_gbm(start_price, drift, volatility, days=252, num_simulations=1000)
         price_paths[t] = price_paths[t - 1] * np.exp((drift - 0.5 * volatility**2) * dt + volatility * np.sqrt(dt) * random_shock)
 
     return price_paths
+
+
+def calculate_return_statistics(df):
+    """
+    Calculate expected return (mu) and standard deviation (sigma) from simulated buyback data.
+    
+    Parameters:
+    - df: Pandas DataFrame with columns ['shares_purchased', 'todays_VWAP', 'budget_remaining'].
+    
+    Returns:
+    - mu: The expected daily return of the strategy.
+    - sigma: The standard deviation of the daily returns.
+    """
+    raise NotImplementedError("Implement this function")
+    # Calculate daily returns from VWAP and shares purchased
+    df['daily_return'] = (df['shares_purchased'] * df['todays_VWAP']) / df['budget_remaining']
+    
+    # Calculate mu and sigma
+    mu = df['daily_return'].mean()
+    sigma = df['daily_return'].std()
+    
+    return mu, sigma

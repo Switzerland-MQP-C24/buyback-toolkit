@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 
-def calculate_historical_var(returns, confidence_level=0.95):
+def calculate_historical_var(returns, confidence_level=0.95): # Add more arguments to this function
     """
     Calculate VaR using the Historical Method.
     
@@ -65,3 +65,30 @@ def calculate_monte_carlo_var(P, mu, sigma, time_horizon, simulations, confidenc
     index = int((1 - confidence_level) * len(sorted_future_values))
     VaR = abs(P - sorted_future_values[index])
     return VaR
+
+def calculate_expected_shortfall(prices, confidence_level=0.95):
+    """
+    Calculate Expected Shortfall (ES) using the Historical Method.
+    
+    Parameters:
+    - prices: A list or numpy array of historical prices.
+    - confidence_level: The confidence level (e.g., 0.95 for 95%).
+    
+    Returns:
+    - ES: The calculated Expected Shortfall at the specified confidence level.
+    """
+    if not isinstance(prices, np.ndarray):
+        prices = np.array(prices)
+    
+    # Calculate returns
+    returns = np.diff(prices) / prices[:-1]
+    
+    # Sort returns from worst to best
+    sorted_returns = np.sort(returns)
+    
+    # Calculate the index for the VaR
+    index = int((1 - confidence_level) * len(sorted_returns))
+    
+    # Calculate the Expected Shortfall
+    ES = abs(sorted_returns[:index].mean())
+    return ES
