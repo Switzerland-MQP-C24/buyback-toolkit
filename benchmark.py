@@ -26,5 +26,5 @@ def calculate_bogus_benchmark(price, volume):
         vwap_values (array): The vwap values at each point in time
     """
     #vwap_values = (price * volume) / (volume)
-    vwap_values = price.expanding().mean() # assuming price is the day's vwap
+    vwap_values = price.expanding().mean() # assuming price is the day's average purchase price
     return vwap_values
