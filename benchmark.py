@@ -1,8 +1,8 @@
 import numpy as np
 
-def calculate_institutional_vwap(price, volume):
+def calculate_vwap(price, volume): # DEBUG: insitutional is a misnomer
     """
-    Calculate the institutional Volume Weighted Average Price (VWAP)
+    Calculate the Volume Weighted Average Price (VWAP)
 
     Parameters:
         price (array): The price of the asset
@@ -14,7 +14,7 @@ def calculate_institutional_vwap(price, volume):
     vwap_values = np.cumsum(price * volume) / np.cumsum(volume)
     return vwap_values
 
-def calculate_bogus_vwap(price, volume):
+def calculate_bogus_benchmark(price, volume):
     """
     Calculate the bogus Volume Weighted Average Price (VWAP)
 
