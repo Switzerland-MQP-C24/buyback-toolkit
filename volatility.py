@@ -1,6 +1,45 @@
 import numpy as np
 from scipy.stats import norm
 
+def calculate_volatility(prices):
+    """
+    Calculate the annualized volatility of a stock based on historical prices.
+    
+    Parameters:
+    - prices: A list or numpy array of historical prices.
+    
+    Returns:
+    - volatility: The annualized volatility of the stock.
+    - drift: The average daily return of the stock.
+    """
+    if not isinstance(prices, np.ndarray):
+        prices = np.array(prices) # TODO: allow pandas series
+    
+    # Calculate daily returns
+    returns = np.diff(prices) / prices[:-1]
+    
+    # Calculate the average daily return
+    drift = returns.mean()
+    
+    # Calculate the daily volatility
+    volatility = returns.std() * np.sqrt(252) # 252 trading days in a year
+    
+    return volatility, drift
+
+def calculate_daily_var(Q, P, sigma, confidence_level=0.95):
+    """
+    Calculate daily VaR using the Variance-Covariance Method.
+
+    Parameters:
+    - Q: The quantity of remaining shares to purchase.
+    - P: The current price of the asset.
+    - sigma: The standard deviation of the asset's returns.
+    - confidence_level: The confidence level (e.g., 0.95 for 95%).
+    """
+    Z = norm.ppf(confidence_level)
+    VaR = Q * P * sigma * Z
+    return VaR
+
 def calculate_historical_var(returns, confidence_level=0.95): # Add more arguments to this function
     """
     Calculate VaR using the Historical Method.
