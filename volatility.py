@@ -3,13 +3,13 @@ from scipy.stats import norm
 
 def calculate_volatility(prices):
     """
-    Calculate the annualized volatility of a stock based on historical prices.
+    Calculate the daily volatility of a stock based on historical prices.
     
     Parameters:
     - prices: A list or numpy array of historical prices.
     
     Returns:
-    - volatility: The annualized volatility of the stock.
+    - volatility: The daily volatility of the stock.
     - drift: The average daily return of the stock.
     """
     if not isinstance(prices, np.ndarray):
@@ -22,7 +22,7 @@ def calculate_volatility(prices):
     drift = returns.mean()
     
     # Calculate the daily volatility
-    volatility = returns.std() * np.sqrt(252) # 252 trading days in a year
+    volatility = returns.std()# * np.sqrt(252) # 252 trading days in a year
     
     return volatility, drift
 
