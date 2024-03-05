@@ -49,8 +49,7 @@ def keras_predictor(volume, model_path):
     - A pandas Series of the predicted trade volumes.
     """
     look_back = 21 # DEBUG: hardcoded because the model is trained with this
-    start_date = volume.index.iloc[look_back]
-
+    
     # Load the Keras model
     model = load_model(model_path)
 
@@ -72,5 +71,5 @@ def keras_predictor(volume, model_path):
         prediction = np.rint(prediction) # round the prediction to the nearest integer
         predictions.append(prediction)
 
-    predictions_df = pd.Series(predictions, index=volume.index[start_date:])
+    predictions_df = pd.Series(predictions, index=volume.index[look_back:])
     return predictions_df
