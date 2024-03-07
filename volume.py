@@ -3,12 +3,7 @@ import numpy as np
 from keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 
-# TODO: move constants to a different file and explain
-WEEK = 5
-MOTNH = 21
-QUARTER = 63
-HALF_YEAR = 126
-YEAR = 252
+from .constants import MOTNH
 
 def simple_moving_average(data, period=MOTNH):
     """
@@ -49,7 +44,7 @@ def keras_predictor(volume, model_path, verbosity="auto"):
     Returns:
     - A pandas Series of the predicted trade volumes.
     """
-    look_back = 21 # DEBUG: hardcoded because the model is trained with this
+    look_back = MOTNH # DEBUG: hardcoded because the model is trained with this
 
     # Load the Keras model
     model = load_model(model_path)
