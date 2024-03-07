@@ -37,13 +37,14 @@ def exponential_moving_average(data, period=MOTNH, adjust=False):
     """
     return data.ewm(span=period, adjust=adjust).mean()
 
-def keras_predictor(volume, model_path):
+def keras_predictor(volume, model_path, verbosity="auto"):
     """
     Predict the daily trade volume using a Keras model.
 
     Parameters:
     - volume: A pandas Series of trade volumes.
     - model_path: The path to the Keras model.
+    - verbosity: The verbosity level of the Keras model. 0 = silent, 1 = progress bar, 2 = single line.
 
     Returns:
     - A pandas Series of the predicted trade volumes.
@@ -57,19 +58,18 @@ def keras_predictor(volume, model_path):
     scaler = MinMaxScaler(feature_range=(0, 1))
     volume_data = scaler.fit_transform(volume.values.reshape(-1, 1))
 
-    X = []
-    for i in range(len(volume_data) - look_back):
-        X.append(volume_data[i:(i + look_back), 0])
-    X = np.array(X) # DEBUG: convert to numpy array. Is this necessary?
+    # Create X for lookback window directly 
+    X = np.array([volume_data[i:(i + look_back), 0] for i in range(len(volume_data) - look_back)])
 
-    # Predict the trade volumes
-    predictions = []
-    for i in range(len(X)):
-        prediction = model.predict(X[i].reshape(1, -1))
-        prediction = scaler.inverse_transform(prediction)[0, 0]
-        prediction = max(prediction, 0) # make sure the prediction is not negative
-        prediction = np.rint(prediction) # round the prediction to the nearest integer
-        predictions.append(prediction)
+    # Vectorized prediction
+    predictions = model.predict(X, verbose=verbosity)
 
-    predictions_df = pd.Series(predictions, index=volume.index[look_back:]).shift(-1) # DEBUG: shift the predictions by 1 day
-    return predictions_df
+    # Inverse transform and adjustments
+    predictions = scaler.inverse_transform(predictions)[:, 0]  # Get the relevant column
+    predictions[predictions < 0] = 0  # Ensure non-negative values
+    predictions = np.rint(predictions)  # Round to nearest integer
+
+    # Create predictions DataFrame with shifted index
+    predictions_df = pd.Series(predictions, index=volume.index[look_back:]).shift(-1) 
+
+    return predictions_df 
