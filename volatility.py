@@ -26,18 +26,22 @@ def calculate_volatility(prices):
     
     return volatility, drift
 
-def calculate_daily_var(Q, P, sigma, confidence_level=0.95):
+def calculate_var(P, sigma, Q=1, days=1, confidence_level=0.95):
     """
-    Calculate daily VaR using the Variance-Covariance Method.
-
+    Calculate VaR using the Variance-Covariance Method.
+    
     Parameters:
-    - Q: The quantity of remaining shares to purchase.
-    - P: The current price of the asset.
-    - sigma: The standard deviation of the asset's returns.
+    - P: The current value of the portfolio or asset.
+    - sigma: The standard deviation of the portfolio's or asset's returns.
+    - Q: The quantity of remaining shares to purchase. If 1, the VaR is calculated for the current portfolio value.
+    - days: The number of days to calculate VaR for.
     - confidence_level: The confidence level (e.g., 0.95 for 95%).
+    
+    Returns:
+    - VaR: The calculated Value at Risk at the specified confidence level.
     """
     Z = norm.ppf(confidence_level)
-    VaR = Q * P * sigma * Z
+    VaR = P * Q * sigma * Z * np.sqrt(days)
     return VaR
 
 def calculate_historical_var(returns, confidence_level=0.95): # Add more arguments to this function
@@ -93,22 +97,6 @@ def calculate_historical_var_from_prices(prices, portfolio_value, confidence_lev
     
     return VaR
 
-def calculate_variance_covariance_var(P, sigma, confidence_level=0.95):
-    """
-    Calculate VaR using the Variance-Covariance Method.
-    
-    Parameters:
-    - P: The current value of the portfolio or asset.
-    - sigma: The standard deviation of the portfolio's or asset's returns.
-    - confidence_level: The confidence level (e.g., 0.95 for 95%).
-    
-    Returns:
-    - VaR: The calculated Value at Risk at the specified confidence level.
-    """
-    Z = norm.ppf(confidence_level)
-    VaR = Z * sigma * P
-    return VaR
-
 def calculate_monte_carlo_var(P, mu, sigma, time_horizon, simulations, confidence_level=0.95):
     """
     Calculate VaR using the Monte Carlo Simulation Method.
@@ -126,7 +114,7 @@ def calculate_monte_carlo_var(P, mu, sigma, time_horizon, simulations, confidenc
     """
     # Generate random price paths
     random_shocks = np.random.normal(mu * time_horizon, sigma * np.sqrt(time_horizon), simulations)
-    future_values = P + P * random_shocks
+    future_values = P + P * random_shocks # TODO: dedicated monte carlo function
     
     # Calculate VaR
     sorted_future_values = np.sort(future_values)
