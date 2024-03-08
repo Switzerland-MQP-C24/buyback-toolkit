@@ -93,7 +93,17 @@ def calculate_progress(df, budget=-1, target_shares=-1, cols=[SHARES_COL, PRICE_
         raise ValueError("The DataFrame must contain the required columns")
 
     # Calculate the cost of purchasing the shares
-    df[COST_COL] = df[cols[0]] * df[cols[1]]
+    # Adjust the daily shares to not exceed the budget and target shares
+    if (adjust): # DEBUG: this is a hack to adjust the shares to not exceed the budget and target shares
+        remaining_budget = budget
+        remaining_shares = target_shares
+        # Adjust the daily shares to not exceed the budget and target shares
+        for i, row in df.iterrows():
+            shares, cost, remaining_budget, remaining_shares = buy_shares(row[cols[0]], row[cols[1]], remaining_budget, remaining_shares)
+            df.at[i, cols[0]] = shares # DEBUG: should this become a new column?
+            df.at[i, COST_COL] = cost
+    else:
+        df[COST_COL] = df[cols[0]] * df[cols[1]]
 
     # Calculate the cumulative cost and shares
     df[CUM_COST_COL] = df[COST_COL].cumsum()
@@ -109,15 +119,6 @@ def calculate_progress(df, budget=-1, target_shares=-1, cols=[SHARES_COL, PRICE_
         
     # TODO: prevent going negative on budget and shares properly
     df[df < 0] = 0 # DEBUG: this is a hack to set negative values to 0
-
-    if (adjust): # DEBUG: this is a hack to adjust the shares to not exceed the budget and target shares
-        remaining_budget = budget
-        remaining_shares = target_shares
-        # Adjust the daily shares to not exceed the budget and target shares
-        for i, row in df.iterrows():
-            shares, cost, remaining_budget, remaining_shares = buy_shares(row[cols[0]], row[cols[1]], remaining_budget, remaining_shares)
-            df.at[i, cols[0]] = shares # DEBUG: should this become a new column?
-            df.at[i, COST_COL] = cost
 
     return df
 
