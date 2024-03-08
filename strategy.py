@@ -28,9 +28,9 @@ def buy_shares(desired_shares, price, remaining_budget=-1, remaining_shares=-1):
     """
     # Calculate the number of shares to purchase
     shares = desired_shares
-    if remaining_budget != -1:
+    if remaining_budget > -1:
         shares = min(shares, remaining_budget / price)
-    if remaining_shares != -1:
+    if remaining_shares > -1:
         shares = min(shares, remaining_shares)
     shares = int(shares)
 
@@ -38,9 +38,9 @@ def buy_shares(desired_shares, price, remaining_budget=-1, remaining_shares=-1):
     cost = shares * price
 
     # Calculate the remaining budget and shares
-    if remaining_budget != -1:
+    if remaining_budget > -1:
         remaining_budget -= cost
-    if remaining_shares != -1:
+    if remaining_shares > -1:
         remaining_shares -= shares
 
     return shares, cost, remaining_budget, remaining_shares
@@ -74,15 +74,16 @@ def fixed_participation_rate(volumes, participation_rate, target_shares=-1): # T
     
     return shares
 
-def calculate_progress(df, budget=0, target_shares=0, cols=[SHARES_COL, PRICE_COL]):
+def calculate_progress(df, budget=-1, target_shares=-1, cols=[SHARES_COL, PRICE_COL], adjust=True):
     """
     Calculate the progress of the strategy over time. Calculates cost, cumulative cost, cumulative shares, remaining budget, and remaining shares.
     
     Parameters:
     - df: A pandas DataFrame containing the shares and price columns.
-    - budget: The initial budget for purchasing shares. If 0, the budget is not considered.
-    - target_shares: The target number of shares to purchase. If 0, the target shares is not considered.
+    - budget: The initial budget for purchasing shares. If <= 0, the budget is not considered.
+    - target_shares: The target number of shares to purchase. If <= 0, the target shares is not considered.
     - cols: The column names for the shares and price.
+    - adjust: Whether to adjust the daily shares to not exceed the budget and target shares.
     
     Returns:
     - progress: An updated DataFrame containing the cost, cumulative cost, cumulative shares, remaining budget, and remaining shares.
@@ -108,6 +109,15 @@ def calculate_progress(df, budget=0, target_shares=0, cols=[SHARES_COL, PRICE_CO
         
     # TODO: prevent going negative on budget and shares properly
     df[df < 0] = 0 # DEBUG: this is a hack to set negative values to 0
+
+    if (adjust): # DEBUG: this is a hack to adjust the shares to not exceed the budget and target shares
+        remaining_budget = budget
+        remaining_shares = target_shares
+        # Adjust the daily shares to not exceed the budget and target shares
+        for i, row in df.iterrows():
+            shares, cost, remaining_budget, remaining_shares = buy_shares(row[cols[0]], row[cols[1]], remaining_budget, remaining_shares)
+            df.at[i, cols[0]] = shares # DEBUG: should this become a new column?
+            df.at[i, COST_COL] = cost
 
     return df
 
