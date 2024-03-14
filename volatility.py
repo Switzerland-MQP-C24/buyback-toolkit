@@ -40,6 +40,9 @@ def calculate_var(P, sigma, Q=1, days=1, confidence_level=0.95):
     Returns:
     - VaR: The calculated Value at Risk at the specified confidence level.
     """
+    if (days < 0):
+        return 0
+     
     Z = norm.ppf(confidence_level)
     VaR = P * Q * sigma * Z * np.sqrt(days)
     return VaR
