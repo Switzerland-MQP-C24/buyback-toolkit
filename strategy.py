@@ -115,7 +115,8 @@ def calculate_progress(df, budget=-1, target_shares=-1, cols=[SHARES_COL, PRICE_
     # TODO: else calculate remaining budget based on shares and price?
     if target_shares > 0:
         df[REM_SHARES_COL] = target_shares - df[CUM_SHARES_COL]
-    # TODO: else calculate remaining shares based on budget and price?
+    else:
+        df[REM_SHARES_COL] = df[SHARES_COL][::-1].cumsum()[::-1]
         
     # TODO: prevent going negative on budget and shares properly
     df[df < 0] = 0 # DEBUG: this is a hack to set negative values to 0
