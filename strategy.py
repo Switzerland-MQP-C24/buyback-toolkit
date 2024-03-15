@@ -123,6 +123,32 @@ def calculate_progress(df, budget=-1, target_shares=-1, cols=[SHARES_COL, PRICE_
 
     return df
 
+def calculate_runtime(df, cols=[SHARES_COL, PRICE_COL, COST_COL], threshold=1):
+    """
+    Get the runtime and last day of the strategy.
+    
+    Parameters:
+    - df: A pandas DataFrame representing the strategy, containing the cost, cumulative cost, cumulative shares, remaining budget, and remaining shares columns.
+    - cols: The column names for the cost, cumulative cost, cumulative shares, remaining budget, and remaining shares.
+    - threshold: The threshold for the number of shares purchased to consider the strategy as running.
+    
+    Returns:
+    - total_days: The number of business days the strategy has been running.
+    - last_day: A dictionary containing the cost, cumulative cost, cumulative shares, remaining budget, and remaining shares for the last day.
+    """
+    # Make sure the DataFrame contains the required columns
+    #if not all(col in df.columns for col in cols):
+    #    raise ValueError("The DataFrame must contain the required columns")
+    if not (SHARES_COL in df.columns):
+        raise ValueError(f"The DataFrame must contain the required column {SHARES_COL}")
+
+    # Get the last day of the strategy
+    is_running = (df[cols[0]] > threshold) # If num shares purchased is greater than threshold
+    last_day = df[is_running].last_valid_index()
+    total_days = len(df[:last_day].index) # TODO: return?
+
+    return total_days, last_day
+
 def describe(df, cols=[COST_COL, CUM_COST_COL, CUM_SHARES_COL, REM_BUDGET_COL, REM_SHARES_COL]):
     """
     Describe the progress of the strategy over time. Calculates the total cost, total shares, average price, and average shares.
