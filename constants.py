@@ -10,6 +10,8 @@ CUM_SHARES_COL = "Cumulative Shares"
 REM_BUDGET_COL = "Remaining Budget"
 REM_SHARES_COL = "Remaining Shares"
 
+TYPICAL_PRICE = "Typical Price"
+
 WEEK = 5
 MOTNH = 21
 QUARTER = 63

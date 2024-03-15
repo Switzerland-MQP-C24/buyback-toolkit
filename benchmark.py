@@ -50,6 +50,7 @@ def calculate_typical_price(high=None, low=None, close=None, df=None, cols=[HIGH
         high = df[cols[0]]
         low = df[cols[1]]
         close = df[cols[2]]
+        # TODO: insert in the dataframe?
 
     typical_price = (high + low + close) / 3
     return typical_price
