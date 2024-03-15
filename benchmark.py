@@ -13,7 +13,9 @@ def calculate_vwap(price, volume): # DEBUG: insitutional is a misnomer
     Returns:
         vwap_values (array): The vwap values at each point in time
     """
-    vwap_values = np.cumsum((price * volume).replace(0, np.nan)) / np.cumsum(volume)
+    #vwap_values = np.cumsum((price * volume).replace(0, np.nan)) / np.cumsum(volume)
+    vwap_values = np.cumsum(price * volume) / np.cumsum(volume)
+
     return vwap_values
 
 def calculate_bogus_benchmark(price, volume=None): # DEBUG: check if this is correct
