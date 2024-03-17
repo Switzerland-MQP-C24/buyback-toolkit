@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from helpers.monte_carlo import simulate_gbm
+from buyback.monte_carlo import simulate_gbm
 
 class TestMonteCarloSimulation(unittest.TestCase):
     def test_simulate_gbm_initial_price_and_shape(self):

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from helpers.volatility import calculate_historical_var, calculate_var, calculate_monte_carlo_var
+from buyback.volatility import calculate_historical_var, calculate_var, calculate_monte_carlo_var
 
 # Generated with ChatGPT
 class TestVolatility(unittest.TestCase):
