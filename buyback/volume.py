@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 
 from .constants import MOTNH
@@ -44,6 +43,11 @@ def keras_predictor(volume, model_path, verbosity="auto"):
     Returns:
     - A pandas Series of the predicted trade volumes.
     """
+    try:
+        from keras.models import load_model
+    except ImportError:
+        raise ImportError("Keras is not installed. Please install Keras to use this function.")
+
     look_back = MOTNH # DEBUG: hardcoded because the model is trained with this
 
     # Load the Keras model
