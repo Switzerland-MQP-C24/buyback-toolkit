@@ -11,11 +11,15 @@ python = "^3.11"
 numpy = "^1.26.4"
 pandas = "^2.2.1"
 scipy = "^1.12.0"
+keras = {version = "*", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.0.0"
 pytest = "^8.1.1"
 black = "^24.3.0"
+
+[tool.poetry.extras]
+ml = ["keras"]
 
 [build-system]
 requires = ["poetry-core"]
