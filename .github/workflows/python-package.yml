@@ -41,6 +41,16 @@ jobs:
       run: |
         pipx install poetry
 
+    - run: echo $PIPX_HOME/venvs
+
+    - name: Cache Poetry
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/pipx/venvs  # Path where pipx installs venvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
