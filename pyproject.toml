@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A Python toolkit for simulating and analyzing share buyback strategies"
 authors = ["Rob Chiocchio <rmchiocchio@wpi.edu>"]
 readme = "README.md"
-license = "GNU GPLv3"
+license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "^3.11"
