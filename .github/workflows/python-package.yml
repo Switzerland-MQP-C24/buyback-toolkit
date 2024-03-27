@@ -1,7 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Publish
+name:
 
 on:
 #  push:
@@ -12,13 +9,19 @@ on:
     tags:
       - 'v*.*.*'
   workflow_dispatch:
-
-permissions:
-  contents: write
-  packages: write
+    inputs:
+      # version:
+        dry-run:
+          description: "Dry run"
+          required: false
+          default: false
+          type: "boolean"
     
 jobs:
   build:
+    permissions:
+      contents: read
+      packages: write
 
     runs-on: ubuntu-latest
     strategy:
@@ -57,9 +60,6 @@ jobs:
       run: |
         poetry run pytest
 
-    - name: Set PyPI token
-      run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-
     - name: Check version
       id: check_version
       run: |
@@ -74,13 +74,41 @@ jobs:
             poetry version patch # Default to patch version bump
           fi
 
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"  
-          git commit -m "Update version to $(poetry version --short)" pyproject.toml
-          git push 
+          if [ ${{ github.event.inputs.dry-run }} != true ]; then
+            git config --global user.email "actions@github.com"
+            git config --global user.name "GitHub Actions"  
+            git commit -m "Update version to $(poetry version --short)" pyproject.toml
+            git push 
+          fi
         else
           echo "Versions match. No update needed."
         fi
+
+    - name: Build package
+      run: poetry build
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist
+
+    #- name: Publish package
+    #  run: poetry publish --build
+
+  publish:
+    needs: build
+    if: github.event.inputs.dry-run != true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: dist
+
+    - name: Set PyPI token
+      run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
 
     - name: Publish package
       run: poetry publish --build
