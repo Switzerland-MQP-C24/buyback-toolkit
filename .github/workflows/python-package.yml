@@ -17,12 +17,13 @@ on:
           default: false
           type: "boolean"
     
+
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
-    permissions:
-      contents: read
-      packages: write
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
