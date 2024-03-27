@@ -36,20 +36,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Cache Poetry
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.PIPX_HOME }}/venvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
     - name: Install Poetry
       shell: bash
       run: |
         pipx install poetry
-
-    - run: echo $PIPX_HOME/venvs
-
-    - name: Cache Poetry
-      uses: actions/cache@v3
-      with:
-        path: ~/.local/pipx/venvs  # Path where pipx installs venvs
-        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -110,16 +108,16 @@ jobs:
     #- name: Publish package
     #  run: poetry publish --build
 
-  publish:
-    needs: build
-    if: github.event.inputs.dry-run != true
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-        path: dist
+  # publish:
+  #   needs: build
+  #   if: github.event.inputs.dry-run != true
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Download artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: dist
+  #       path: dist
 
     - name: Set PyPI token
       run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
