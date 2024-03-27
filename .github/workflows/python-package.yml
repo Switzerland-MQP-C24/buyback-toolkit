@@ -1,4 +1,4 @@
-name:
+name: Build and Publish
 
 on:
 #  push:
@@ -10,13 +10,16 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
     inputs:
-      # version:
         dry-run:
           description: "Dry run"
           required: false
           default: false
           type: "boolean"
-    
+        # version:
+        #   description: "Version"
+        #   required: false
+        #   default: "patch"
+        #   type: "string"
 
 permissions:
   contents: read
